@@ -1,0 +1,305 @@
+import random
+import time
+from time import sleep
+
+player_victory = 0
+computer_victory = 0
+n = 1
+detect = {'6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 2, 'Q': 3, 'K': 4}
+print("Приветствуем Вас в Виртуальном Казино!\n")
+
+while True:
+    print("1. Играть в 21")
+    print("2. Играть в рулетку")
+    print("3. Играть в Однорукого Бандита")
+    print("4. Играть в Крестики-Нолики на двоих")
+    print("5. Играть в Камень-Ножницы-Бумага на двоих")
+    print("6. Выход")
+    ch = input("Выберите пункт: ")
+
+    if ch == "1":
+        while True:
+            vibor1 = input('Начинаем игру? (y/n) > ')
+            if vibor1 == 'n' or vibor1 == 'N':
+                break
+            elif vibor1 == 'y' or vibor1 == 'Y':
+                print(f'Раунд {n}-й\n')
+
+            player_cards = []
+            player_sum = 0
+
+            computer_cards = []
+            computer_sum = 0
+
+            cards = [(mast, numb) for mast in range(4) for numb in ['6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']]
+            random.shuffle(cards)
+
+            player_cards.append(cards.pop())
+            player_cards.append(cards.pop())
+            for mast, numb in player_cards:
+                if numb == 'A':
+                    if player_sum + 11 > 21:
+                        player_sum += 1
+                    else:
+                        player_sum += 11
+                else:
+                    player_sum += detect[numb]
+
+            computer_cards.append(cards.pop())
+            computer_cards.append(cards.pop())
+            for mast, numb in computer_cards:
+                if numb == 'A':
+                    if computer_sum + 11 > 21:
+                        computer_sum += 1
+                    else:
+                        computer_sum += 11
+                else:
+                    computer_sum += detect[numb]
+
+            while True:
+                print('Ваши карты: ', end='')
+                for mast, numb in player_cards:
+                    print(numb, ['червы', 'бубны', 'трефы', 'пики'][mast], end='; ')
+
+                print(f'\nСумма очков: {player_sum}')
+
+                if player_sum > 21:
+                    sleep(2)
+                    break
+
+                cmd = input('Взять еще одну карту? (y/n) > ')
+                if cmd == 'n' or cmd == 'N':
+                    break
+                elif cmd == 'y' or cmd == 'Y':
+                    card = cards.pop()
+                    numb = card[1]
+                    player_cards.append(card)
+
+                    if numb == 'A':
+                        if player_sum + 11 > 21:
+                            player_sum += 1
+                        else:
+                            player_sum += 11
+                    else:
+                        player_sum += detect[numb]
+
+                print()
+
+            while True:
+                if computer_sum + 5 <= 21:
+                    card = cards.pop()
+                    numb = card[1]
+                    computer_cards.append(card)
+
+                    if numb == 'A':
+                        if computer_sum + 11 > 21:
+                            computer_sum += 1
+                        else:
+                            computer_sum += 11
+                    else:
+                        computer_sum += detect[numb]
+                else:
+                    break
+
+            print('\nКарты компьютера: ', end='')
+            for mast, numb in computer_cards:
+                print(numb, ['червы', 'бубны', 'трефы', 'пики'][mast], end='; ')
+
+            print(f'\nСумма очков компьютера: {computer_sum}')
+
+            if (player_sum == computer_sum) or (computer_sum > 21 and player_sum > 21):
+                print('\nНичья\n')
+                n += 1
+                sleep(5)
+            elif player_sum > 21 or (player_sum < computer_sum and computer_sum < 22):
+                print('\nВ этом раунде победил компьютер\n')
+                computer_victory += 1
+                n += 1
+                sleep(5)
+            else:
+                print('\nВ этом раунде победил человек\n')
+                player_victory += 1
+                n += 1
+                sleep(5)
+
+            if player_victory == 5:
+                print('\nПобедитель: человек!')
+                break
+
+            if computer_victory == 5:
+                print('\nПобедитель: компьютер!')
+                break
+    elif ch == "2":
+        while True:
+            vibor2 = input('Начинаем игру? (y/n) > ')
+            if vibor2 == 'n' or vibor2 == 'N':
+                break
+            elif vibor2 == 'y' or vibor2 == 'Y':
+                from random import randint
+
+            class Rul:
+
+                def __init__(self):
+                    self.reds = (1, 3, 5, 7, 9, 12, 14, 16, 18, 21, 23, 25, 27, 30, 32, 34, 36)
+                    self.blacks = (2, 4, 6, 8, 10, 11, 13, 15, 17, 19, 20, 22, 24, 26, 28, 29, 31, 33, 35)
+
+                def roll(self):
+                    num = randint(0, 36)
+
+                    isdigit = False
+                    player = input('Ставим на Красное или Черное? (red/black)')
+                    if player.isdigit():
+                        player = int(player)
+                        isdigit = True
+                    elif player not in ['red', 'black']:
+                        return None
+
+                    red = False
+                    black = False
+
+                    if num == 0:
+                        print('Зеро')
+                    elif num in self.reds:
+                        print(num, 'Красное')
+                        red = True
+                    elif num in self.blacks:
+                        print(num, 'Черное')
+                        black = True
+
+                    if isdigit:
+                        if num == player:
+                            return 'В этом раунде победил человек'
+                        return 'В этом раунде победил компьютер'
+                    else:
+                        if player == 'red' and red:
+                            return 'В этом раунде победил человек'
+                        elif player == 'black' and black:
+                            return 'В этом раунде победил человек'
+                        return 'В этом раунде победил компьютер'
+
+            r = Rul()
+            print(r.roll())
+    elif ch == "3":
+        while True:
+            vibor3 = input('Начинаем игру? (y/n) > ')
+            if vibor3 == 'n' or vibor3 == 'N':
+                break
+            elif vibor3 == 'y' or vibor3 == 'Y':
+                s1 = random.SystemRandom().choice(['🍒', '🍌', '💲', '7', '🔔'])
+                s2 = random.SystemRandom().choice(['🍒', '🍌', '💲', '7', '🔔'])
+                s3 = random.SystemRandom().choice(['🍒', '🍌', '💲', '7', '🔔'])
+
+                print ('| - ' + s1 + ' - | - ' + s2 + ' - | - ' + s3 + ' - |')
+                time.sleep(2)
+                if s1 == s2 or s2 == s3:
+                    print ('Вы победили!')
+                elif s1 == s2 == s3:
+                    print ('Вы сорвали Джекпот!')
+                else:
+                    print ('Вы проиграли!')
+    elif ch == "4":
+        while True:
+            vibor4 = input('Начинаем игру? (y/n) > ')
+            if vibor4 == 'n' or vibor4 == 'N':
+                break
+            elif vibor4 == 'y' or vibor4 == 'Y':
+
+                board = list(range(1, 10))
+
+                def draw_board(board):
+                    print("-" * 13)
+                    for i in range(3):
+                        print("|", board[0 + i * 3], "|", board[1 + i * 3], "|", board[2 + i * 3], "|")
+                        print("-" * 13)
+
+                def take_input(pl_ch):
+                    valid = False
+                    while not valid:
+                        pl_ans = input("Куда поставим " + pl_ch + "? ")
+                        try:
+                            pl_ans = int(pl_ans)
+                        except:
+                            print("Некорректный ввод. Вы уверены, что ввели число?")
+                            continue
+                        if pl_ans >= 1 and pl_ans <= 9:
+                            if (str(board[pl_ans - 1]) not in "XO"):
+                                board[pl_ans - 1] = pl_ch
+                                valid = True
+                            else:
+                                print("Клетка занята!")
+                        else:
+                            print("Некорректный ввод. Введите число от 1 до 9.")
+
+                def check_win(board):
+                    win_coord = ((0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7), (2, 5, 8), (0, 4, 8), (2, 4, 6))
+                    for each in win_coord:
+                        if board[each[0]] == board[each[1]] == board[each[2]]:
+                            return board[each[0]]
+                    return False
+
+
+                def main(board):
+                    counter = 0
+                    win = False
+                    while not win:
+                        draw_board(board)
+                        if counter % 2 == 0:
+                            take_input("X")
+                        else:
+                            take_input("O")
+                        counter += 1
+                        if counter > 4:
+                            tmp = check_win(board)
+                            if tmp:
+                                print(tmp, "выиграл!")
+                                break
+                        if counter == 9:
+                            print("Ничья!")
+                            break
+                    draw_board(board)
+
+                main(board)
+    elif ch == "5":
+        while True:
+            vibor4 = input('Начинаем игру? (y/n) > ')
+            if vibor4 == 'n' or vibor4 == 'N':
+                break
+            elif vibor4 == 'y' or vibor4 == 'Y':
+
+                    p1 = input("Игрок 1. Камень (1), Ножницы (2), Бумага (3) ?\n")
+                    p1 = p1.lower()
+
+                    print()
+
+                    p2 = input("Игрок 2. Камень (1), Ножницы (2), Бумага (3) ?\n")
+                    p2 = p2.lower()
+
+                    print()
+
+                    if (p1 == "1"):
+                        if (p2 == "1"):
+                            print("Ничья!")
+                        elif (p2 == "3"):
+                            print("Игрок 2 победил!")
+                        elif (p2 == "2"):
+                            print("Игрок 1 победил!")
+                    elif (p1 == "3"):
+                        if (p2 == "1"):
+                            print("Игрок 1 победил!")
+                        elif (p2 == "3"):
+                            print("Ничья!")
+                        elif (p2 == "2"):
+                            print("Игрок 2 победил!")
+                    elif (p1 == "2"):
+                        if (p2 == "1"):
+                            print("Игрок 2 победил!")
+                        elif (p2 == "3"):
+                            print("Игрок 1 победил!")
+                        elif (p2 == "2"):
+                            print("Ничья!")
+                    else:
+                        print("Неправильный ввод. Попробуйте еще раз.")
+    elif ch == "6":
+        break
+    else:
+        print("Вы ввели неправильное значение")
